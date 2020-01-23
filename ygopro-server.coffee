@@ -1750,16 +1750,20 @@ net.createServer (client) ->
     return
 
   if settings.modules.cloud_replay.enabled
+    zlib = require 'zlib'
     client.open_cloud_replay= (err, replay)->
-      if err or !replay
-        ygopro.stoc_die(client, "${cloud_replay_no}")
-        return
       if settings.modules.cloud_replay.engine == 'redis'
         if !settings.modules.cloud_replay.never_expire
           redisdb.expire("replay:"+replay.replay_id, 60*60*48)
         buffer=Buffer.from(replay.replay_buffer,'binary')
       else if settings.modules.cloud_replay.engine == 'mysql'
-        buffer=Buffer.from(replay[0].replayBuffer)
+        if err or !replay or !replay[0] or !replay[0].replayBuffer
+          ygopro.stoc_die(client, "${cloud_replay_no}")
+          return
+        try
+          buffer=Buffer.from(replay[0].replayBuffer)
+        catch
+          return
       zlib.unzip buffer, (err, replay_buffer) ->
         if err
           log.info "cloud replay unzip error: " + err

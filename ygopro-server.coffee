@@ -396,15 +396,19 @@ if settings.modules.cloud_replay.enabled
     mysqldb.on 'error', (err)->
       log.warn err
       return
-    global.dc_decks_main = new Array(100)
-    global.dc_decks_side = new Array(100)
+    global.dc_decks_index_max = 500
+    global.dc_decks_main = new Array(dc_decks_index_max)
+    global.dc_decks_side = new Array(dc_decks_index_max)
+    global.dc_decks_md5 = new Array(dc_decks_index_max)
     global.dc_decks_index = 0
-    sql = "SELECT * FROM RandomDecks ORDER BY RAND() LIMIT 100;"
-    result = global.mysqldb_sync.query sql
-    for res in result
+    for i in [0...dc_decks_index_max]
+        sql = "SELECT * FROM RandomDecks AS t1 JOIN (SELECT FLOOR(RAND() * (SELECT MAX(id) FROM RandomDecks)) AS id) AS t2 WHERE t1.id >= t2.id ORDER BY t1.id LIMIT 1;"
+        result = global.mysqldb_sync.query sql
+        result = result[0];
         buff_main = []
         buff_side = []
-        cards = (res.content).split(/[\r\n\t ]+/)
+        deck = result.content
+        cards = deck.split(/[\r\n\t ]+/)
         side = false
         for card in cards
             code = parseInt(card.trim())
@@ -415,10 +419,9 @@ if settings.modules.cloud_replay.enabled
                     buff_side.push code
             else if (card.substring 0,5) == "!side"
                 side = true
-        dc_decks_main[global.dc_decks_index] = buff_main
-        dc_decks_side[global.dc_decks_index] = buff_side
-        global.dc_decks_index++
-    global.dc_decks_index = 0
+        dc_decks_main[i] = buff_main
+        dc_decks_side[i] = buff_side
+        dc_decks_md5[i] = result.md5
     #sql = 'CREATE DATABASE ygo;'
     #mysqldb.query sql, sqlParams, (err, result)->
     #  if err
@@ -429,6 +432,8 @@ if settings.modules.cloud_replay.enabled
     #  if err
     #    log.info err
     #  return
+    #CREATE INDEX idIndex ON CloudReplay(replayId);
+    #CREATE INDEX ipIndex ON CloudReplay(ip,saveDate(20));
 if settings.modules.windbot.enabled
   windbots = global.windbots = loadJSON(settings.modules.windbot.botlist).windbots
   real_windbot_server_ip = global.real_windbot_server_ip = settings.modules.windbot.server_ip
@@ -2097,7 +2102,7 @@ ygopro.ctos_follow 'JOIN_GAME', false, (buffer, info, client, server, datas)->
       replay_id=Cloud_replay_ids[Math.floor(Math.random()*Cloud_replay_ids.length)]
       redisdb.hgetall "replay:"+replay_id, client.open_cloud_replay
     if settings.modules.cloud_replay.engine == 'mysql'
-      sql = "SELECT * FROM CloudReplay ORDER BY RAND() LIMIT 1;"
+      sql = "SELECT * FROM CloudReplay AS t1 JOIN (SELECT ROUND(RAND() * ((SELECT MAX(replayId) FROM CloudReplay)-(SELECT MIN(replayId) FROM CloudReplay))+(SELECT MIN(replayId) FROM CloudReplay)) AS replayId) AS t2 WHERE t1.replayId >= t2.replayId ORDER BY t1.replayId LIMIT 1;"
       mysqldb.query sql,client.open_cloud_replay
   else if info.version != settings.version # and (info.version < 9020 or settings.version != 4927) #强行兼容23333版
     ygopro.stoc_send_chat(client, settings.modules.update, ygopro.constants.COLORS.RED)

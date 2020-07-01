@@ -398,12 +398,14 @@ if settings.modules.cloud_replay.enabled
       return
     global.dc_decks_main = new Array(100)
     global.dc_decks_side = new Array(100)
+    global.dc_decks_md5 = new Array(100)
     global.dc_decks_index = 0
     sql = "SELECT * FROM RandomDecks ORDER BY RAND() LIMIT 100;"
     result = global.mysqldb_sync.query sql
     for res in result
         buff_main = []
         buff_side = []
+        log.warn(res.content)
         cards = (res.content).split(/[\r\n\t ]+/)
         side = false
         for card in cards

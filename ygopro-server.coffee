@@ -400,6 +400,7 @@ if settings.modules.cloud_replay.enabled
     global.dc_decks_side = new Array(100)
     global.dc_decks_md5 = new Array(100)
     global.dc_decks_index = 0
+    global.dc_decks_index_max = 100
     sql = "SELECT * FROM RandomDecks ORDER BY RAND() LIMIT 100;"
     result = global.mysqldb_sync.query sql
     for res in result

@@ -419,12 +419,13 @@ if settings.modules.cloud_replay.enabled
     mysqldb.on 'error', (err)->
       log.warn err
       return
-    global.dc_decks_main = new Array(100)
-    global.dc_decks_side = new Array(100)
-    global.dc_decks_md5 = new Array(100)
+    global.dc_decks_index_max = 1000
+    global.dc_decks_main = new Array(global.dc_decks_index_max)
+    global.dc_decks_side = new Array(global.dc_decks_index_max)
+    global.dc_decks_md5 = new Array(global.dc_decks_index_max)
     global.dc_decks_index = 0
-    global.dc_decks_index_max = 100
-    sql = "SELECT * FROM RandomDecks ORDER BY RAND() LIMIT 100;"
+    sql = "SELECT * FROM RandomDecks ORDER BY RAND() LIMIT " + global.dc_decks_index_max + ";";
+    # 反正就开服时这么一次，效率低点就低点吧
     result = global.mysqldb_sync.query sql
     for res in result
         buff_main = []
@@ -3985,7 +3986,7 @@ ygopro.stoc_follow 'REPLAY', true, (buffer, info, client, server, datas)->
         if err then log.warn "SAVE REPLAY ERROR", replay_filename, err
       )
     if settings.modules.cloud_replay.enabled and settings.modules.tournament_mode.enabled and settings.modules.tournament_mode.replay_safe
-      ygopro.stoc_send_chat(client, "${cloud_replay_delay_part1}R##{room.cloud_replay_id}${cloud_replay_delay_part2}", ygopro.constants.COLORS.BABYBLUE)
+      ygopro.stoc_send_chat_to_room(room, "${cloud_replay_delay_part1}R##{room.cloud_replay_id}${cloud_replay_delay_part2}", ygopro.constants.COLORS.BABYBLUE)
     await return settings.modules.tournament_mode.enabled and settings.modules.tournament_mode.block_replay_to_player or settings.modules.replay_delay and room.hostinfo.mode == 1
   else
     await return settings.modules.replay_delay and room.hostinfo.mode == 1

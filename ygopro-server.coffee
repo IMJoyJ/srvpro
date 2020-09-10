@@ -3986,7 +3986,9 @@ ygopro.stoc_follow 'REPLAY', true, (buffer, info, client, server, datas)->
         if err then log.warn "SAVE REPLAY ERROR", replay_filename, err
       )
     if settings.modules.cloud_replay.enabled and settings.modules.tournament_mode.enabled and settings.modules.tournament_mode.replay_safe
-      ygopro.stoc_send_chat_to_room(room, "${cloud_replay_delay_part1}R##{room.cloud_replay_id}${cloud_replay_delay_part2}", ygopro.constants.COLORS.BABYBLUE)
+      if room.sent_cloud_replay == undefined
+        room.sent_cloud_replay = true
+        ygopro.stoc_send_chat_to_room(room, "${cloud_replay_delay_part1}R##{room.cloud_replay_id}${cloud_replay_delay_part2}", ygopro.constants.COLORS.BABYBLUE)
     await return settings.modules.tournament_mode.enabled and settings.modules.tournament_mode.block_replay_to_player or settings.modules.replay_delay and room.hostinfo.mode == 1
   else
     await return settings.modules.replay_delay and room.hostinfo.mode == 1

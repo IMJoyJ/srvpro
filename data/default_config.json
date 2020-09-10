@@ -1,13 +1,14 @@
 {
   "file": "./config/config.json",
   "port": 7911,
-  "version": 4930,
+  "version": 4945,
+  "alternative_versions": [],
   "hostinfo": {
     "lflist": 0,
     "rule": 0,
     "mode": 0,
     "comment": "rule: 0=OCGONLY, 1=TCGONLY, 2=OT; mode: 0=SINGLE, 1=MATCH, 2=TAG",
-    "duel_rule": 4,
+    "duel_rule": 5,
     "no_check_deck": false,
     "no_shuffle_deck": false,
     "start_lp": 8000,
@@ -23,8 +24,9 @@
     "stop": false,
     "side_timeout": false,
     "tag_duel_surrender": true,
-    "replay_delay": false,
+    "replay_delay": true,
     "hide_name": false,
+    "display_watchers": false,
     "i18n": {
       "auto_pick": false,
       "default": "zh-cn",
@@ -79,11 +81,16 @@
     },
     "random_duel": {
       "enabled": true,
+      "default_type": "S",
       "no_rematch_check": false,
       "record_match_scores": false,
       "post_match_scores": false,
       "post_match_accesskey": "123456",
-      "blank_pass_match": true,
+      "blank_pass_modes": {
+        "S": true,
+        "M": true,
+        "T": false
+      },
       "ready_time": 20,
       "hang_timeout": 90
     },
@@ -184,8 +191,9 @@
       "replay_safe": true,
       "replay_path": "./replays/",
       "replay_archive_tool": "7z",
-      "block_replay_to_player": true,
-      "show_ip": false,
+      "block_replay_to_player": false,
+      "enable_recover": false,
+      "show_ip": true,
       "show_info": true,
       "log_save_path": "./config/",
       "port": 7933
@@ -204,6 +212,7 @@
       "html_filename": "pre.html",
       "git_db_path": "../ygopro-pre-data/",
       "db_path": "../ygopro-pre-data/unofficial/",
+      "ypk_name": "pre-release.ypk",
       "html_img_rel_path": "pre/pics/",
       "html_img_thumbnail": "thumbnail/",
       "html_img_thumbnail_suffix": "!thumb",
@@ -304,7 +313,7 @@
       "port": 7922,
       "websocket_roomlist": false,
       "public_roomlist": false,
-      "show_ip": false,
+      "show_ip": true,
       "show_info": true,
       "quick_death_rule": 2,
       "ssl": {

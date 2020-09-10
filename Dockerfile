@@ -5,7 +5,7 @@ RUN npm install -g pm2
 
 # apt
 RUN apt update && \
-    env DEBIAN_FRONTEND=noninteractive apt install -y wget git build-essential libevent-dev libsqlite3-dev mono-complete p7zip-full redis-server && \
+    env DEBIAN_FRONTEND=noninteractive apt install -y wget git build-essential libevent-dev libsqlite3-dev mono-complete p7zip-full redis-server python3 liblua5.3-dev && \
     rm -rf /var/lib/apt/lists/*
 
 # srvpro
@@ -18,7 +18,7 @@ RUN npm ci && \
 RUN git clone --branch=server --recursive --depth=1 https://github.com/purerosefallen/ygopro && \
     cd ygopro && \
     git submodule foreach git checkout master && \
-    wget -O - https://github.com/premake/premake-core/releases/download/v5.0.0-alpha13/premake-5.0.0-alpha13-linux.tar.gz | tar zfx - && \
+    wget -O - https://github.com/premake/premake-core/releases/download/v5.0.0-alpha14/premake-5.0.0-alpha14-linux.tar.gz | tar zfx - && \
     ./premake5 gmake && \
     cd build && \
     make config=release -j$(nproc) && \

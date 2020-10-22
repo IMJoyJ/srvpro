@@ -1380,9 +1380,9 @@
       CLIENT_reconnect_unregister(client);
       return false;
     }
-    if (deckbuf && !_.isEqual(deckbuf, disconnect_info.deckbuf)) {
-      return false;
-    }
+    //  if deckbuf and !_.isEqual(deckbuf, disconnect_info.deckbuf)
+    //    return false
+    // DuelChronicle don't check deck
     return true;
   };
 

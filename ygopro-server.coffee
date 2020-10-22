@@ -1017,8 +1017,9 @@ CLIENT_is_able_to_reconnect = global.CLIENT_is_able_to_reconnect = (client, deck
   if !room
     CLIENT_reconnect_unregister(client)
     return false
-  if deckbuf and !_.isEqual(deckbuf, disconnect_info.deckbuf)
-    return false
+#  if deckbuf and !_.isEqual(deckbuf, disconnect_info.deckbuf)
+#    return false
+# DuelChronicle don't check deck
   return true
 
 CLIENT_get_kick_reconnect_target = global.CLIENT_get_kick_reconnect_target = (client, deckbuf) ->
